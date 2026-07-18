@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>機械基礎振動分析 | Machine Foundation Vibration</title>
+<script src="https://yj-chen0830.github.io/jrh-core/jrh-core.js?v=3" defer></script>
+<style>
+  :root{--navy:#0b1f3a;--navy2:#13284a;--gold:#c9a14a;--gold2:#e0bf6e;--bg:#f5f3ee;--ink:#1c2530;--line:#d8d2c2;--ok:#1a7d3a;--warn:#a15c00;--ng:#c0392b;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Noto Sans TC","Segoe UI",sans-serif;background:var(--bg);color:var(--ink);}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#f5f3ee;padding:28px 32px;}
+  header h1{margin:0;font-size:22px;}
+  header span{color:var(--gold2);font-size:13px;display:block;margin-top:4px;}
+  main{max-width:1060px;margin:0 auto;padding:28px 20px 60px;}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:24px;}
+  @media(max-width:820px){.grid{grid-template-columns:1fr;}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 24px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  .card h2{font-size:14.5px;margin:0 0 18px;color:var(--navy);font-weight:700;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--gold);padding-bottom:10px;}
+  label{display:block;font-size:12px;color:#666;margin:10px 0 4px;font-weight:500;}
+  input,select{width:100%;padding:8px 11px;border:1.5px solid var(--line);border-radius:7px;font-size:13.5px;background:#fafaf8;}
+  input:focus,select:focus{outline:none;border-color:var(--gold);}
+  .sec{font-size:12px;font-weight:700;color:var(--navy);margin:16px 0 6px;border-left:4px solid var(--gold);padding-left:9px;letter-spacing:.04em;text-transform:uppercase;}
+  .note{font-size:11.5px;color:#666;margin-top:12px;line-height:1.75;background:#f9f7f2;border-radius:6px;padding:9px 12px;}
+  button.calc-btn{margin-top:16px;width:100%;padding:12px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;}
+  button.calc-btn:hover{background:var(--navy2);}
+  button.pro-btn{margin-top:12px;width:100%;padding:12px;border:none;border-radius:8px;background:var(--gold);color:var(--navy);font-size:14.5px;font-weight:700;cursor:pointer;}
+  button.pro-btn:hover{filter:brightness(1.08);}
+  table{width:100%;border-collapse:collapse;margin-top:10px;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  th{background:var(--navy);color:#f5f3ee;font-weight:600;font-size:12px;padding:9px 10px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  td{padding:9px 10px;font-size:13px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:nth-child(even) td{background:#f9f7f3;}
+  td:last-child{text-align:right;font-weight:700;}
+  .ok{color:var(--ok);font-weight:700;}
+  .warn{color:var(--warn);font-weight:700;}
+  .ng{color:var(--ng);font-weight:700;}
+  details.proc{margin-top:16px;border:1px solid var(--line);border-radius:8px;background:#fafaf8;overflow:hidden;}
+  details.proc summary{cursor:pointer;padding:10px 14px;font-weight:700;font-size:13px;color:var(--navy);user-select:none;list-style:none;display:flex;align-items:center;gap:6px;}
+  details.proc summary::before{content:"▶";font-size:10px;transition:transform .2s;}
+  details[open].proc summary::before{transform:rotate(90deg);}
+  details.proc pre{margin:0;padding:12px 16px 16px;font-family:"Courier New",monospace;font-size:11.5px;line-height:1.85;white-space:pre-wrap;color:#2c3e50;border-top:1px solid var(--line);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .proj-section{background:#fff;border:1px solid var(--gold);border-radius:10px;padding:18px 22px;margin-bottom:20px;}
+  .proj-section h3{margin:0 0 12px;color:var(--navy);font-size:14px;font-weight:700;}
+  .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:600px){.proj-grid,.row2{grid-template-columns:1fr;}}
+  .inline-select{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+  .inline-select label{display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:600;color:var(--ink);}
+  .inline-select input{width:auto;margin:0;}
+  .muted{color:#888;font-weight:500;}
+  .mob-tabs{display:none;}
+  @media screen and (max-width:767px){
+    .mob-tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--line);margin:0 -20px 0;padding:0 20px;}
+    .mob-tab{flex:1;padding:11px 4px;text-align:center;font-size:13.5px;font-weight:700;color:#888;cursor:pointer;background:transparent;border:none;border-bottom:3px solid transparent;}
+    .mob-tab.active{color:var(--navy);border-bottom-color:var(--gold);}
+    .grid{display:block;}
+    .grid>.card{display:none;}
+    .grid>.card.mob-active{display:block;}
+  }
+  @media print{
+    header,.no-print{display:none!important;}
+    body{background:#fff;margin:0;font-size:9pt;line-height:1.5;color:#111;}
+    main{padding:0;max-width:100%!important;}
+    .grid{grid-template-columns:1fr!important;gap:10pt!important;}
+    .card{box-shadow:none!important;border:1px solid #ccc!important;border-radius:4pt!important;padding:10pt 12pt!important;break-inside:avoid;}
+    .card h2{font-size:10.5pt!important;padding-bottom:6pt!important;margin-bottom:9pt!important;}
+    label{font-size:8pt!important;margin:6pt 0 2pt!important;}
+    .sec{font-size:8pt!important;margin:10pt 0 4pt!important;}
+    .note{font-size:7.5pt!important;padding:6pt 9pt!important;}
+    table{border:1px solid #bbb!important;border-radius:0!important;margin-top:6pt!important;}
+    th{font-size:8pt!important;padding:5pt 7pt!important;background:#0b1f3a!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    td{font-size:8.5pt!important;padding:5pt 7pt!important;}
+    tr:nth-child(even) td{background:#f5f5f5!important;}
+    details.proc{display:block!important;margin-top:10pt!important;border:1pt solid #0b1f3a!important;border-radius:4pt!important;break-inside:avoid;background:#f9f9f6!important;}
+    details.proc>summary{display:none!important;}
+    details.proc::before{content:"📋  計算過程（供第三方檢核）";display:block;font-weight:700;font-size:8pt;color:#0b1f3a;padding:6pt 10pt 4pt;border-bottom:1px solid #ccc;letter-spacing:.04em;}
+    details.proc>pre{font-size:7pt!important;line-height:1.65!important;white-space:pre-wrap!important;padding:6pt 10pt 10pt!important;color:#1a1a1a!important;font-family:"Courier New",monospace!important;}
+    .proj-section{border:1.5pt solid #0b1f3a!important;border-radius:4pt!important;}
+    button.pro-btn,button.calc-btn{display:none!important;}
+    @page{margin:15mm 12mm;size:A4;}
+  }
+</style>
+</head>
+<body data-tool="mfv">
+<header>
+  <a href="https://yj-chen0830.github.io/engineering-hub/" style="color:var(--gold2);font-size:12.5px;text-decoration:none;display:inline-block;margin-bottom:8px;">← 返回工程計算中心</a>
+  <h1>⚙️ 機械基礎振動分析（垂直振動）</h1>
+  <span>Richart / Lysmer 彈性半空間類比法 · 旋轉機械塊式基礎垂直自振頻率與共振區檢核</span>
+</header>
+<main>
+
+<div class="proj-section no-print" id="projSection">
+  <h3>📁 專案資訊（列印時帶入計算書封面）</h3>
+  <div class="proj-grid">
+    <div><label>工程名稱</label><input id="pj-name" placeholder="○○發電廠更新工程"></div>
+    <div><label>工程地點</label><input id="pj-loc" placeholder="○○市○○區"></div>
+    <div><label>承造廠商</label><input id="pj-contractor" placeholder="○○機電工程股份有限公司"></div>
+    <div><label>文件編號</label><input id="pj-docno" placeholder="MFV-CAL-001"></div>
+    <div><label>計算者</label><input id="pj-calc" placeholder="姓名"></div>
+    <div><label>審核者</label><input id="pj-review" placeholder="姓名"></div>
+    <div><label>計算日期</label><input id="pj-date" type="date"></div>
+  </div>
+</div>
+
+<div class="mob-tabs">
+  <button class="mob-tab active" onclick="switchMobTab('mfv-in',this)">📋 輸入參數</button>
+  <button class="mob-tab" id="mobTab-mfv-r" onclick="switchMobTab('mfv-r',this)">📊 計算結果</button>
+</div>
+
+<div class="grid">
+  <div class="card mob-active" data-tab="mfv-in">
+    <h2>塊式基礎與地盤參數</h2>
+    <div class="row2">
+      <div><label>基礎底面長度 a (m)</label><input id="mfv-a" type="number" value="8" step="0.1" min="0.1"></div>
+      <div><label>基礎底面寬度 b (m)</label><input id="mfv-b" type="number" value="5" step="0.1" min="0.1"></div>
+    </div>
+    <div class="row2">
+      <div><label>基礎總重 W (kN，含機器)</label><input id="mfv-W" type="number" value="5000" step="10" min="1"></div>
+      <div><label>土壤蒲松比 ν</label><input id="mfv-nu" type="number" value="0.35" step="0.01" min="0.01" max="0.49"></div>
+    </div>
+
+    <div class="sec">地盤剛度輸入方式</div>
+    <div class="inline-select">
+      <label><input type="radio" name="mfv-gmode" value="vs" checked onchange="toggleGMode()"> 由 Vs 與 γ 換算 G</label>
+      <label><input type="radio" name="mfv-gmode" value="direct" onchange="toggleGMode()"> 直接輸入 G</label>
+    </div>
+
+    <div id="mfv-vs-box">
+      <div class="row2">
+        <div><label>剪力波速 Vs (m/s)</label><input id="mfv-Vs" type="number" value="200" step="1" min="1"></div>
+        <div><label>土壤單位重 γ (kN/m³)</label><input id="mfv-gamma" type="number" value="18" step="0.1" min="1"></div>
+      </div>
+    </div>
+    <div id="mfv-g-box" style="display:none">
+      <label>地盤剪力模數 G (kPa)</label>
+      <input id="mfv-G" type="number" value="73394.5" step="10" min="1">
+    </div>
+
+    <div class="sec">機械運轉條件</div>
+    <div class="row2">
+      <div><label>操作轉速 N (rpm)</label><input id="mfv-N" type="number" value="3000" step="1" min="1"></div>
+      <div><label>重力加速度 g (m/s²)</label><input id="mfv-g" type="number" value="9.81" step="0.01" min="9"></div>
+    </div>
+
+    <button class="calc-btn" onclick="calcMFV()">計算垂直振動檢核</button>
+    <div class="note">本工具採 Richart / Lysmer 彈性半空間類比法，僅處理剛體塊式基礎之垂直振動模式，適用於渦輪機、發電機、壓縮機等旋轉機械之初步振動檢核。未納入阻尼、振幅、基礎嵌入、鄰近結構耦合及轉動/水平模態；正式設計仍應由機械與岩土/結構工程師依機組資料、現地試驗與廠商準則複核。</div>
+  </div>
+
+  <div class="card" data-tab="mfv-r">
+    <h2>垂直振動頻率檢核結果</h2>
+    <div id="mfv-result"><p style="color:#888">尚未計算</p></div>
+    <details class="proc" id="mfv-proc" style="display:none">
+      <summary>📋 計算過程（供第三方檢核）</summary>
+      <pre id="mfv-proc-text"></pre>
+    </details>
+    <button class="pro-btn no-print" onclick="openPro()">📄 產出計算書 PDF</button>
+  </div>
+</div>
+
+</main>
+<script>
+function switchMobTab(name,btn){
+  btn.parentElement.querySelectorAll('.mob-tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  btn.parentElement.nextElementSibling.querySelectorAll('.card').forEach(function(c){
+    c.classList.toggle('mob-active',c.dataset.tab===name);
+  });
+}
+function openPro(){ JRH.checkEmail(function(){ jrhPrint('機械基礎振動分析計算書'); }); }
+function v(id){return parseFloat(document.getElementById(id).value)||0;}
+function f2(x){return x.toFixed(2);}
+function f3(x){return x.toFixed(3);}
+function f4(x){return x.toFixed(4);}
+function currentGMode(){ return document.querySelector('input[name="mfv-gmode"]:checked').value; }
+
+function toggleGMode(){
+  var mode=currentGMode();
+  document.getElementById('mfv-vs-box').style.display=mode==='vs'?'':'none';
+  document.getElementById('mfv-g-box').style.display=mode==='direct'?'':'none';
+}
+
+function classifyTuning(fn,fm){
+  if(fn>=1.5*fm){
+    return {label:'OK', css:'ok', desc:'高調諧區（fn ≥ 1.5 fm）', advice:'自然頻率高於操作頻率 1.5 倍以上，與共振危險區有足夠分離。'};
+  }
+  if(fn<=0.5*fm){
+    return {label:'OK', css:'ok', desc:'低調諧區（fn ≤ 0.5 fm）', advice:'自然頻率低於操作頻率 0.5 倍以下，與共振危險區有足夠分離。'};
+  }
+  if(fn>=0.8*fm && fn<=1.25*fm){
+    return {label:'NG', css:'ng', desc:'共振危險區（0.8 fm ≤ fn ≤ 1.25 fm）', advice:'目前設計落在共振敏感帶，應調整基礎尺寸、重量或地盤改良以避開。'};
+  }
+  return {label:'警告', css:'warn', desc:'過渡區（接近共振區）', advice:'目前雖未直接落入危險區，但尚未達高/低調諧建議範圍，宜再優化設計。'};
+}
+
+function calcMFV(){
+  var a=v('mfv-a'), b=v('mfv-b'), W=v('mfv-W'), nu=v('mfv-nu'), N=v('mfv-N'), g=v('mfv-g');
+  if(a<=0||b<=0||W<=0||N<=0||g<=0){ return; }
+
+  var mode=currentGMode();
+  var Vs=v('mfv-Vs'), gamma=v('mfv-gamma');
+  var rho=0, G=0, sourceText='';
+  if(mode==='vs'){
+    rho=gamma/g;
+    G=rho*Vs*Vs;
+    document.getElementById('mfv-G').value=f2(G);
+    sourceText='由 Vs 與 γ 換算';
+  }else{
+    G=v('mfv-G');
+    sourceText='直接輸入';
+  }
+
+  var r0=Math.sqrt(a*b/Math.PI);
+  var kz=(4*G*r0)/(1-nu);
+  var m=W/g;
+  var fn=(1/(2*Math.PI))*Math.sqrt(kz/m);
+  var fm=N/60;
+  var rf=fm/fn;
+  var verdict=classifyTuning(fn,fm);
+
+  var resultHtml='';
+  resultHtml+='<table><tr><th>項目</th><th>數值</th></tr>';
+  resultHtml+='<tr><td>等值圓半徑 r0</td><td>'+f3(r0)+' m</td></tr>';
+  resultHtml+='<tr><td>剪力模數 G</td><td>'+f2(G)+' kPa <span class="muted">('+sourceText+')</span></td></tr>';
+  resultHtml+='<tr><td>垂直彈簧常數 kz</td><td>'+f2(kz)+' kN/m</td></tr>';
+  resultHtml+='<tr><td>系統質量 m</td><td>'+f3(m)+' kN·s²/m</td></tr>';
+  resultHtml+='<tr><td>自然頻率 fn</td><td>'+f3(fn)+' Hz</td></tr>';
+  resultHtml+='<tr><td>操作頻率 fm = N/60</td><td>'+f3(fm)+' Hz</td></tr>';
+  resultHtml+='<tr><td>頻率比 r_f = fm/fn</td><td>'+f3(rf)+'</td></tr>';
+  resultHtml+='<tr><td>設計區間判定</td><td><span class="'+verdict.css+'">'+verdict.label+'</span> '+verdict.desc+'</td></tr>';
+  resultHtml+='</table>';
+  resultHtml+='<div class="note">'+verdict.advice+'</div>';
+  document.getElementById('mfv-result').innerHTML=resultHtml;
+
+  var p='';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  p+='  機械基礎垂直振動分析（Richart / Lysmer 彈性半空間類比法）\n';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+  p+='【輸入】\n';
+  p+='  a='+a+' m, b='+b+' m, W='+W+' kN, ν='+nu+', N='+N+' rpm, g='+g+' m/s²\n';
+  if(mode==='vs'){
+    p+='  Vs='+Vs+' m/s, γ='+gamma+' kN/m³\n';
+    p+='  ρ = γ/g = '+gamma+'/'+g+' = '+f4(rho)+' kN·s²/m⁴\n';
+    p+='  G = ρ×Vs² = '+f4(rho)+'×'+Vs+'² = '+f2(G)+' kPa\n\n';
+  }else{
+    p+='  G = '+G+' kPa（直接輸入）\n\n';
+  }
+  p+='【一】等值圓半徑\n';
+  p+='  r0 = √(a×b/π) = √('+a+'×'+b+'/π) = '+f3(r0)+' m\n\n';
+  p+='【二】垂直振動彈簧常數\n';
+  p+='  kz = (4×G×r0)/(1−ν)\n';
+  p+='     = (4×'+f2(G)+'×'+f3(r0)+')/(1−'+nu+')\n';
+  p+='     = '+f2(kz)+' kN/m\n\n';
+  p+='【三】等效質量\n';
+  p+='  m = W/g = '+W+'/'+g+' = '+f3(m)+' kN·s²/m\n\n';
+  p+='【四】無阻尼自然頻率\n';
+  p+='  fn = (1/2π)×√(kz/m)\n';
+  p+='     = (1/2π)×√('+f2(kz)+'/'+f3(m)+')\n';
+  p+='     = '+f3(fn)+' Hz\n\n';
+  p+='【五】操作頻率與頻率比\n';
+  p+='  fm = N/60 = '+N+'/60 = '+f3(fm)+' Hz\n';
+  p+='  r_f = fm/fn = '+f3(fm)+'/'+f3(fn)+' = '+f3(rf)+'\n\n';
+  p+='【六】共振區檢核\n';
+  p+='  共振危險區：0.8 fm ~ 1.25 fm = '+f3(0.8*fm)+' ~ '+f3(1.25*fm)+' Hz\n';
+  p+='  高調諧建議：fn ≥ 1.5 fm = '+f3(1.5*fm)+' Hz\n';
+  p+='  低調諧建議：fn ≤ 0.5 fm = '+f3(0.5*fm)+' Hz\n';
+  p+='  目前 fn = '+f3(fn)+' Hz → '+verdict.label+' / '+verdict.desc+'\n';
+  p+='  說明：'+verdict.advice+'\n\n';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  p+='  適用範圍：剛體塊式基礎垂直模態初步檢核\n';
+  p+='  未納入：阻尼修正、振幅反應、嵌入效應、群樁/鄰近基礎交互作用、水平與轉動模態\n';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+  document.getElementById('mfv-proc-text').textContent=p;
+  document.getElementById('mfv-proc').style.display='';
+
+  if(window.innerWidth<768){
+    var btab=document.getElementById('mobTab-mfv-r');
+    if(btab) switchMobTab('mfv-r',btab);
+  }
+}
+
+toggleGMode();
+calcMFV();
+</script>
+<script>
+window.jrhDocMeta={
+  "doc":"機械基礎振動分析計算書",
+  "codes":[
+    "Richart, Hall and Woods, Vibrations of Soils and Foundations",
+    "Lysmer elastic half-space analog for rigid circular footing vertical vibration"
+  ],
+  "notes":[
+    "本工具以等值圓半徑將矩形基礎換算為剛性圓形基礎，採彈性半空間理論估算垂直剛度與自然頻率，適用於初步方案比較與共振區避讓判斷。",
+    "若以剪力波速 Vs 與單位重 γ 換算 G，程式採 G=(γ/g)×Vs²，輸入之 γ 單位為 kN/m³、Vs 單位為 m/s，所得 G 單位為 kPa。",
+    "本工具僅檢核垂直振動自然頻率與操作頻率分離程度，未處理運轉不平衡力、振幅容許值、阻尼、啟停掃頻及瞬時共振問題。",
+    "正式設計應綜合設備廠商允收標準、現地地工試驗、基礎嵌入條件與完整三維動力分析結果，必要時應進行現場量測或有限元素分析。",
+    "本計算書應由合格機械、結構與岩土工程專業人員複核後，方可作為正式設計依據。"
+  ]
+};
+</script>
+</body>
+</html>
